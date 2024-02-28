@@ -1,6 +1,7 @@
 # Databricks notebook source
 from pyspark.sql.functions import col
 from pyspark.sql.types import IntegerType, DoubleType, BooleanType, DateType 
+from pyspark.sql.functions import col, date_format
 
 # COMMAND ----------
 
@@ -51,3 +52,33 @@ action = action.withColumn("rating", col("rating").cast(IntegerType()))
 
 # DBTITLE 1,Rating has changed to int
 action.printSchema()
+
+# COMMAND ----------
+
+# DBTITLE 1,Sets limits to number of movies listed
+all_movies_rated_highest = action.orderBy("rating", ascending=False).select("movie_name", "genre", "rating").limit(15).show()
+
+# COMMAND ----------
+
+# DBTITLE 1,Shows action movie list that contain comedies and limits list to 15
+comedies = action.filter(col("genre").contains("Comedy")).limit(15).show()
+
+# COMMAND ----------
+
+# DBTITLE 1,adds action folder to transformed-data folder
+action.write.option("header", "true").csv("mnt/project-movies-data/transformed-data/action")
+
+# COMMAND ----------
+
+# DBTITLE 1,Changes year to date type
+action =action.withColumn("year", date_format(col("year"), "yyyy"))
+
+# COMMAND ----------
+
+# DBTITLE 1,Ordering action movies
+all_movies_rated_highest = action.orderBy("rating", ascending=False).select("movie_name", "genre", "rating").limit(15).show()
+
+# COMMAND ----------
+
+# DBTITLE 1,Write's file again with changes
+action.write.mode("overwrite").option("header", "true").csv("/mnt/project-movies-data/transformed-data/action")
