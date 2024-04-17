@@ -280,3 +280,8 @@ fig.update_layout(width=1200, height=800, legend_title="Genre", legend_title_fon
 
 #Displays plot 
 fig.show()
+
+# COMMAND ----------
+
+# DBTITLE 1,New change 
+
